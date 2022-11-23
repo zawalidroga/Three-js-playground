@@ -108,6 +108,7 @@ const makeBlop = function () {
 //raycaster
 
 const raycaster = new THREE.Raycaster();
+raycaster.params.Points.threshold = 5;
 const pointer = new THREE.Vector2();
 
 function onPointerMove( event ) {
@@ -119,19 +120,20 @@ function onPointerMove( event ) {
 	pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 
 }
-
+console.log(particles)
 const findObject = () => {
 
-  raycaster.setFromCamera( pointer, camera );
+  raycaster.setFromCamera( pointer, camera ); 
 
 	// calculate objects intersecting the picking ray
-	const intersects = raycaster.intersectObjects( scene.children );
-  if(intersects.length === 0) {
+	const intersects = raycaster.intersectObject( particles );
+  
+  if(!intersects.length) {
     particles.material.color.setHex( 0xff44ff )
   } else {
 	for ( let i = 0; i < intersects.length; i ++ ) {
-
-		intersects[ i ].object.material.color.set( 0xff0000 );
+    console.log(intersects[i])
+		particles.geometry.scale(0, 0, 0)
 
 	}}
 }
