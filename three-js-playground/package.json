@@ -12,6 +12,7 @@
     "vite": "^3.2.3"
   },
   "dependencies": {
+    "gsap": "^3.11.3",
     "perlin-simplex": "^0.0.3",
     "simplex-noise": "^4.0.1",
     "three": "^0.146.0"

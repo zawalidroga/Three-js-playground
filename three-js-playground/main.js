@@ -1,5 +1,6 @@
 import "./style.css";
 import * as THREE from "three";
+import gsap from "gsap";
 import { createNoise3D } from "https://cdn.skypack.dev/simplex-noise@4.0.0";
 
 const noise3d = createNoise3D();
@@ -13,26 +14,22 @@ const camera = new THREE.PerspectiveCamera(
   1000
 );
 
-
 //render
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
-
 
 //camera
 window.addEventListener("resize", function () {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
-  console.log('resize')
+  console.log("resize");
 });
 
 camera.position.z = 400;
 
-
 const distance = Math.min(200, window.innerWidth / 4);
-
 
 //geometry
 const geometry = new THREE.BufferGeometry();
@@ -73,9 +70,8 @@ for (let i = 0; i < particlesNumber; i++) {
   p.setXYZ(i, x, y, z);
 }
 const blop = new THREE.Group();
-blop.add(particles)
+blop.add(particles);
 scene.add(blop);
-
 
 //end geometry
 
@@ -111,33 +107,38 @@ const raycaster = new THREE.Raycaster();
 raycaster.params.Points.threshold = 5;
 const pointer = new THREE.Vector2();
 
-function onPointerMove( event ) {
+function onPointerMove(event) {
+  // calculate pointer position in normalized device coordinates
+  // (-1 to +1) for both components
 
-	// calculate pointer position in normalized device coordinates
-	// (-1 to +1) for both components
-
-	pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-	pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
+  pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+  pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
 }
-console.log(particles)
+console.log(particles);
 const findObject = () => {
+  raycaster.setFromCamera(pointer, camera);
 
-  raycaster.setFromCamera( pointer, camera ); 
+  // calculate objects intersecting the picking ray
+  const intersects = raycaster.intersectObject(particles);
 
-	// calculate objects intersecting the picking ray
-	const intersects = raycaster.intersectObject( particles );
-  
-  if(!intersects.length) {
-    particles.material.color.setHex( 0xff44ff )
+  if (!intersects.length) {
+    gsap.timeline().to(particles.scale, {
+      x: 1,
+      y: 1,
+      z: 1,
+      ease: "ease.in",
+    });
   } else {
-	for ( let i = 0; i < intersects.length; i ++ ) {
-    console.log(intersects[i])
-		particles.geometry.scale(0, 0, 0)
-
-	}}
-}
-
+    for (let i = 0; i < intersects.length; i++) {
+      gsap.timeline().to(intersects[i].object.scale, {
+        x: 1.2,
+        y: 1.2,
+        z: 1.2,
+        ease: "ease.in",
+      });
+    }
+  }
+};
 
 const animate = function () {
   requestAnimationFrame(animate);
@@ -147,6 +148,6 @@ const animate = function () {
   particles.rotation.x += 0.003;
   particles.rotation.y += 0.003;
 };
-window.addEventListener( 'pointermove', onPointerMove );
+window.addEventListener("pointermove", onPointerMove);
 
 animate();
