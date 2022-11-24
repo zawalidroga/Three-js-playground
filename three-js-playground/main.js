@@ -27,7 +27,7 @@ window.addEventListener("resize", function () {
   console.log("resize");
 });
 
-camera.position.z = 400;
+camera.position.z = 600;
 
 const distance = Math.min(200, window.innerWidth / 4);
 
@@ -122,6 +122,7 @@ const findObject = () => {
   const intersects = raycaster.intersectObject(particles);
 
   if (!intersects.length) {
+
     gsap.timeline().to(particles.scale, {
       x: 1,
       y: 1,
